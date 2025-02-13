@@ -7,7 +7,13 @@ fn main() {
         return;
     };
     
-    let divident: u64 = args[1].parse::<u64>().unwrap();
+    let res = args[1].parse::<u64>();
+    let divident: u64;
+    match res {
+        Ok(_) => divident = res.unwrap(),
+        Err(_) => {println!("Please enter valid u64"); return;},
+    }
+
     if divident < 2 {
         println!("Please enter a number that is larger than 1");
         return;
@@ -31,12 +37,13 @@ fn main() {
 
     for thr in threats {
         let join = thr.join();
-        join.unwrap();
+        let _ = join.unwrap();
     };
 
     working_divisors.sort();
     working_divisors.push(divident);
 
+    println!();
     for i in 0..working_divisors.len() {
         println!("{}", working_divisors[i])
     }
@@ -45,7 +52,9 @@ fn main() {
 fn check(start: u64, divident: u64, increment: u64) -> Vec<u64> {
     let mut divisor = start;
     let mut working_divisors: Vec<u64> = Vec::new();
-    while divisor <= divident/2 {
+    let max_value = divident as f64;
+    let max_value = max_value.sqrt() as u64;
+    while divisor <= max_value {
         if divident%divisor == 0 {
             println!("{}", divisor);
             working_divisors.push(divisor);
