@@ -41,7 +41,6 @@ fn main() {
     };
 
     working_divisors.sort();
-    working_divisors.push(divident);
 
     println!();
     for i in 0..working_divisors.len() {
@@ -58,7 +57,9 @@ fn check(start: u64, divident: u64, increment: u64) -> Vec<u64> {
         if divident%divisor == 0 {
             println!("{} * {}", divisor, divident/divisor);
             working_divisors.push(divisor);
-            working_divisors.push(divident/divisor);
+            if divisor != divident/divisor {
+                working_divisors.push(divident/divisor);
+            }
         }
         divisor += increment;
     }
