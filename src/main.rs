@@ -56,8 +56,9 @@ fn check(start: u64, divident: u64, increment: u64) -> Vec<u64> {
     let max_value = max_value.sqrt() as u64;
     while divisor <= max_value {
         if divident%divisor == 0 {
-            println!("{}", divisor);
+            println!("{} * {}", divisor, divident/divisor);
             working_divisors.push(divisor);
+            working_divisors.push(divident/divisor);
         }
         divisor += increment;
     }
