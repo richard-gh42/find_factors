@@ -1,5 +1,5 @@
 [package]
-name = "find_divisors"
+name = "find_factors"
 version = "1.0.0"
 edition = "2021"
 

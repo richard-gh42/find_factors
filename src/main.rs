@@ -3,7 +3,7 @@ use std::{env, sync::mpsc::{self, Receiver}, thread};
 fn main() {
     let args: Vec<String> = env::args().collect();
     if args.len() < 2 {
-        println!("Find Dovisors\nversion 0.1\nUse: find_divisor [u64] ([path])");
+        println!("Find Factors\nversion 1.0\nUse: find_factors [u64]");
         return;
     };
     
@@ -11,11 +11,11 @@ fn main() {
     let divident: u64;
     match res {
         Ok(_) => divident = res.unwrap(),
-        Err(_) => {println!("Please enter valid u64"); return;},
+        Err(_) => {println!("Please enter a valid u64"); return;},
     }
 
     if divident < 2 {
-        println!("Please enter a number that is larger than 1");
+        println!("Please enter a number larger than 1");
         return;
     }
 
