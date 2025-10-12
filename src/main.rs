@@ -1,4 +1,9 @@
-use std::{collections::VecDeque, env, sync::mpsc::{self, Receiver}, thread}; 
+use std::{
+    collections::{HashSet, VecDeque},
+    env,
+    sync::mpsc::{self, Receiver},
+    thread,
+};
 
 fn main() {
     let mut args: VecDeque<String> = env::args().collect();
@@ -23,12 +28,18 @@ fn main() {
 }
 
 fn print_small_help() {
-    println!("{} {}\nUse '{} help' for help", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_VERSION"), env!("CARGO_PKG_NAME"))
+    println!(
+        "{} {}\nUse '{} help' for help",
+        env!("CARGO_PKG_NAME"),
+        env!("CARGO_PKG_VERSION"),
+        env!("CARGO_PKG_NAME")
+    )
 }
 
 fn print_help() {
     print_small_help();
-    println!("
+    println!(
+        "
  version -> Prints out name and Version
  help    -> Prints out this help
 
@@ -36,7 +47,10 @@ Usage:
 
  {} [number]
  {} [number] [number] ... 
-", env!("CARGO_PKG_NAME"), env!("CARGO_PKG_NAME"))
+",
+        env!("CARGO_PKG_NAME"),
+        env!("CARGO_PKG_NAME")
+    )
 }
 
 // Function getting called if a single number is to be factorized
@@ -45,7 +59,10 @@ fn list_factors(mut args: VecDeque<String>) {
     let num: u64;
     match res {
         Ok(value) => num = value,
-        Err(_) => {println!("Please enter a valid u64"); return;},
+        Err(_) => {
+            println!("Please enter a valid u64");
+            return;
+        }
     }
 
     if num < 2 {
@@ -69,7 +86,9 @@ fn list_common_factors(args: VecDeque<String>) {
         let res = arg.parse::<u64>();
         match res {
             Ok(value) => nums.push(value),
-            Err(_) => {println!("{} is not a in range of u64", arg)}
+            Err(_) => {
+                println!("{} is not a in range of u64", arg)
+            }
         }
     }
 
@@ -89,9 +108,7 @@ fn common_factors_of(nums: Vec<u64>) -> Vec<u64> {
     for num in nums {
         let (tran, rece) = mpsc::channel();
         reces.push(rece);
-        threats.push(thread::spawn(move || {
-            tran.send(factors_of(num, 4))
-        }));
+        threats.push(thread::spawn(move || tran.send(factors_of(num, 4))));
     }
 
     // Receives the vectors containing the factors
@@ -103,39 +120,43 @@ fn common_factors_of(nums: Vec<u64>) -> Vec<u64> {
     for thr in threats {
         let join = thr.join();
         let _ = join.unwrap();
-    };
+    }
 
     // Compares the factor lists
     let mut factor_list: Vec<u64> = factor_lists.pop().unwrap();
     for fl in factor_lists {
-        factor_list.retain(|factor| fl.contains(factor));
+        let mut new_factors: Vec<u64> = Vec::with_capacity(factor_list.len());
+        for f in fl {
+            if factor_list.contains(&f) {
+                new_factors.push(f);
+            }
+        }
+        factor_list = new_factors;
     }
-
+    factor_list.shrink_to_fit();
     return factor_list;
 }
 
 // Function for finding factors of a number
-fn factors_of(num:u64, t: u64) -> Vec<u64> {
+fn factors_of(num: u64, t: u64) -> Vec<u64> {
     let mut reces: Vec<Receiver<Vec<u64>>> = Vec::new();
     let mut factors: Vec<u64> = Vec::new();
     let mut threats = Vec::new();
-    
-    for i in 1..t {
+
+    for i in 1..t + 1 {
         let (tran, rece) = mpsc::channel();
         reces.push(rece);
-        threats.push(thread::spawn( move || {
-            tran.send(check(i, num, t))
-        }));
-    };
+        threats.push(thread::spawn(move || tran.send(check(i, num, t))));
+    }
 
     for rece in reces {
         factors.append(&mut rece.recv().unwrap());
-    };
+    }
 
     for thr in threats {
         let join = thr.join();
         let _ = join.unwrap();
-    };
+    }
 
     factors.sort();
 
@@ -148,11 +169,11 @@ fn check(start: u64, num: u64, increment: u64) -> Vec<u64> {
     let mut working_factors: Vec<u64> = Vec::new();
     let max_value = num as f64;
     let max_value = max_value.sqrt() as u64;
-    while !{factor > max_value} {
-        if num%factor == 0 {
+    while !{ factor > max_value } {
+        if num % factor == 0 {
             working_factors.push(factor);
-            if factor != num/factor {
-                working_factors.push(num/factor);
+            if factor != num / factor {
+                working_factors.push(num / factor);
             }
         }
         factor += increment;
