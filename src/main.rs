@@ -125,13 +125,8 @@ fn common_factors_of(nums: Vec<u64>) -> Vec<u64> {
     // Compares the factor lists
     let mut factor_list: Vec<u64> = factor_lists.pop().unwrap();
     for fl in factor_lists {
-        let mut new_factors: Vec<u64> = Vec::with_capacity(factor_list.len());
-        for f in fl {
-            if factor_list.contains(&f) {
-                new_factors.push(f);
-            }
-        }
-        factor_list = new_factors;
+        // factor list retains all factors which are contained in fl
+        factor_list.retain(|&factor| fl.contains(&factor));
     }
     factor_list.shrink_to_fit();
     return factor_list;
