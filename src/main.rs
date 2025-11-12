@@ -1,5 +1,5 @@
 use std::{
-    collections::{HashSet, VecDeque},
+    collections::VecDeque,
     env,
     sync::mpsc::{self, Receiver},
     thread,
